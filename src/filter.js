@@ -14,14 +14,14 @@ var Filter = function(n) {
         }
     };
 
-    this.validate = function(x) {
-        if(_self.list.length < n/2) {
-            return true;
+    this.validate = function(x, sn) {
+        if(typeof sn === "undefined") {
+            sn = 1;
         }
 
         var s = _self.sigma();
         var a = _self.average();
-        return ((a-s) < x && (a+s) >= x) || (Math.random() > Math.abs(x-a)/a);
+        return (a-s * sn) < x && (a+s * sn) >= x;
     };
 
     this.average = function() {
@@ -31,6 +31,18 @@ var Filter = function(n) {
     this.sigma = function() {
         return Math2.sigma(this.list);
     };
+
+    this.faverage = function(sn) {
+        var flist = [];
+
+        for(var i=0; i<this.list.length; i++) {
+            if(this.validate(this.list[i], sn)) {
+                flist.push(this.list[i]);
+            }
+        }
+
+        return Math2.average(flist);
+    }
 };
 
 module.exports = Filter;
